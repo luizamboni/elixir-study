@@ -1,0 +1,6 @@
+Run
+===
+
+```
+ elixir Repo.exs
+```
