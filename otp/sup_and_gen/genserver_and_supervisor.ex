@@ -1,5 +1,5 @@
 
-defmodule MyFancyProcess do
+defmodule MyProcess do
   use GenServer
 
   def start_link(state) do
@@ -10,13 +10,8 @@ defmodule MyFancyProcess do
   end
 
   ## Public API
-
-  def hello(message) do
-    GenServer.call(__MODULE__, {:hello, message})
-  end
-
-  def counter do
-    GenServer.call(__MODULE__, :counter)
+  def add(n) do
+    GenServer.call(__MODULE__, {:add, n})
   end
 
   ## GenServer callbacks
@@ -25,17 +20,8 @@ defmodule MyFancyProcess do
     {:ok, start_counter}
   end
 
-  def handle_call({:hello, message}, _from, state) do
-    case message do
-      "kill" -> raise("ops... kill message")
-      any -> IO.puts "Hello, #{any}"
-    end
-    # need return the new state
-    {:reply, :noproc, state}
-  end
-
-  def handle_call(:counter, _from, state) do
-    new_state = state + 1
+  def handle_call({:add, n }, _from, state) do
+    new_state = state + n
     IO.puts "New state is #{new_state}"
     # need return the new state
     {:reply, :noproc, new_state}
@@ -43,7 +29,7 @@ defmodule MyFancyProcess do
 end
 
 
-defmodule MyFancySupervisor do
+defmodule MySupervisor do
   use Supervisor
 
   def start_link do
@@ -54,7 +40,7 @@ defmodule MyFancySupervisor do
   def init(_) do
   
     children = [
-      worker(MyFancyProcess, [0])
+      worker(MyProcess, [0])
     ]
 
     opts = [strategy: :rest_for_one]
@@ -63,28 +49,15 @@ defmodule MyFancySupervisor do
   end
 end
 
-# Process.flag(:trap_exit, true)
-# # Receive the trapped exit message
-# receive do
-#   {:EXIT, pid, :normal} ->
-#     IO.inspect "Normal exit from #{inspect pid}"
-#   {:EXIT, pid, msg} ->
-#     IO.inspect ":EXIT received from #{inspect pid}"
-#     IO.inspect msg
-# end
 
+{:ok, sup_pid} = MySupervisor.start_link
 
-{:ok, sup_pid} = MyFancySupervisor.start_link
+MyProcess.add 2
+MyProcess.add 2
 
-MyFancyProcess.hello("foo")
-MyFancyProcess.counter
-MyFancyProcess.counter
+MyProcess.add "cat"
 
-MyFancyProcess.hello("kill")
-MyFancyProcess.hello("foo")
+MyProcess.add 2
 
-MyFancyProcess.counter
-MyFancyProcess.counter
-
-:timer.sleep 5000
+MyProcess.add 2
 
