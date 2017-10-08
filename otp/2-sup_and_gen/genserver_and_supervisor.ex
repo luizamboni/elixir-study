@@ -1,5 +1,5 @@
-defmodule Sup.Accumulator do
-  
+
+defmodule MyProcess do
   use GenServer
 
   def start_link(state) do
@@ -26,5 +26,38 @@ defmodule Sup.Accumulator do
     # need return the new state
     {:reply, :noproc, new_state}
   end
-  
 end
+
+
+defmodule MySupervisor do
+  use Supervisor
+
+  def start_link do
+    Supervisor.start_link(__MODULE__, [])
+  end
+
+  # call this automatic after start_link above
+  def init(_) do
+  
+    children = [
+      worker(MyProcess, [0])
+    ]
+
+    opts = [strategy: :one_for_one]
+
+    supervise(children, opts)
+  end
+end
+
+
+{:ok, sup_pid} = MySupervisor.start_link
+
+MyProcess.add 2
+MyProcess.add 2
+
+MyProcess.add "cat"
+
+MyProcess.add 2
+
+MyProcess.add 2
+

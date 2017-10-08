@@ -30,10 +30,11 @@ defmodule Sup.Application do
     opts = [
       strategy: :one_for_one, 
       name: Sup.Supervisor,
-      restart: :permanent
+      restart: :permanent,
+      shutdown: :infinity
     ]
     Supervisor.start_link(children, opts)
-    Sup.Accumulator.add(1)
+    # Sup.Accumulator.add(1)
     # loop(fn (value)-> Sup.Accumulator.add(value) end)
   end
 end
