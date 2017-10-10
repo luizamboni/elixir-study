@@ -5,13 +5,13 @@ defmodule Sup.Application do
 
   use Application
 
-  # def loop(func) do
-  #   case :rand.uniform(3) do
-  #     3 -> func.("is not a number! will raise an error!") 
-  #     x -> func.(x)
-  #   end
-  #   loop(func)
-  # end
+  def loop(func) do
+    case :rand.uniform(3) do
+      3 -> func.("is not a number! will raise an error!") 
+      x -> func.(x)
+    end
+    loop(func)
+  end
 
   def stop(_app) do
     IO.puts "bye bye"
@@ -35,6 +35,6 @@ defmodule Sup.Application do
     ]
     Supervisor.start_link(children, opts)
     # Sup.Accumulator.add(1)
-    # loop(fn (value)-> Sup.Accumulator.add(value) end)
+    loop(fn (value)-> Sup.Accumulator.add(value) end)
   end
 end
