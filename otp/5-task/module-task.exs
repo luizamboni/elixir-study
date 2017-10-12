@@ -7,10 +7,15 @@ defmodule TaskModule do
   end
 
   def run(arg) do
+    # IO.inspect arg
     IO.puts arg + 2
   end
 
 end
-# not works
 
-Supervisor.start_link([TaskModule])
+
+Supervisor.start_link([
+  # { module, argumnet }
+  { TaskModule, 3 }], 
+  strategy: :one_for_one
+)
